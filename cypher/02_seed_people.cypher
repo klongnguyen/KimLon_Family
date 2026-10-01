@@ -1,7 +1,7 @@
 // ============================================================
 // 02_seed_people.cypher
 // Seed dữ liệu cho bài toán quản lý thân nhân bằng Neo4j
-// Tổng cộng: 36 thành viên, gồm 17 tên ban đầu + các thành viên bổ sung
+// Tổng cộng: 37 thành viên, gồm 17 tên ban đầu + các thành viên bổ sung
 // ============================================================
 
 // Nếu muốn xóa dữ liệu Person cũ trước khi seed lại, chạy thủ công:
@@ -44,6 +44,7 @@ UNWIND [
 
     {person_id:'P025', full_name:'Chu Gia Hân',            gender:'Nữ',  birth_year:2000, generation:3},
     {person_id:'P026', full_name:'Chu Gia Minh',           gender:'Nam', birth_year:2003, generation:3},
+    {person_id:'P037', full_name:'Chu Gia My',             gender:'Nữ',  birth_year:2002, generation:3},
 
     {person_id:'P027', full_name:'Phạm Gia Khang',         gender:'Nam', birth_year:2001, generation:3},
     {person_id:'P028', full_name:'Đào Minh Thuận',         gender:'Nam', birth_year:1999, generation:3},
