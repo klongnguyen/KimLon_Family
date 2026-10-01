@@ -1,30 +1,74 @@
 // ============================================================
 // 02_seed_people.cypher
-// Dữ liệu mẫu gồm 20 thành viên
+// Seed dữ liệu cho bài toán quản lý thân nhân bằng Neo4j
+// Tổng cộng: 36 thành viên, gồm 17 tên ban đầu + các thành viên bổ sung
 // ============================================================
 
-CREATE
-(p01:Person {person_id:'P01', full_name:'Nguyen Van Minh', gender:'Nam', birth_year:1948, phone:'0901000001', address:'Ho Chi Minh City'}),
-(p02:Person {person_id:'P02', full_name:'Tran Thi Hoa', gender:'Nu', birth_year:1950, phone:'0901000002', address:'Ho Chi Minh City'}),
-(p03:Person {person_id:'P03', full_name:'Nguyen Van Nam', gender:'Nam', birth_year:1972, phone:'0901000003', address:'Ho Chi Minh City'}),
-(p04:Person {person_id:'P04', full_name:'Le Thi Lan', gender:'Nu', birth_year:1975, phone:'0901000004', address:'Ho Chi Minh City'}),
-(p05:Person {person_id:'P05', full_name:'Nguyen Van Hung', gender:'Nam', birth_year:1976, phone:'0901000005', address:'Dong Nai'}),
-(p06:Person {person_id:'P06', full_name:'Pham Thi Mai', gender:'Nu', birth_year:1978, phone:'0901000006', address:'Dong Nai'}),
-(p07:Person {person_id:'P07', full_name:'Nguyen Thi Huong', gender:'Nu', birth_year:1980, phone:'0901000007', address:'Can Tho'}),
-(p08:Person {person_id:'P08', full_name:'Tran Van Son', gender:'Nam', birth_year:1978, phone:'0901000008', address:'Can Tho'}),
-(p09:Person {person_id:'P09', full_name:'Nguyen Kim Long', gender:'Nam', birth_year:2003, phone:'0901000009', address:'Ho Chi Minh City'}),
-(p10:Person {person_id:'P10', full_name:'Nguyen Thi Linh', gender:'Nu', birth_year:2006, phone:'0901000010', address:'Ho Chi Minh City'}),
-(p11:Person {person_id:'P11', full_name:'Nguyen Minh Khoa', gender:'Nam', birth_year:2001, phone:'0901000011', address:'Dong Nai'}),
-(p12:Person {person_id:'P12', full_name:'Nguyen Thu Trang', gender:'Nu', birth_year:2004, phone:'0901000012', address:'Dong Nai'}),
-(p13:Person {person_id:'P13', full_name:'Tran Gia Bao', gender:'Nam', birth_year:2002, phone:'0901000013', address:'Can Tho'}),
-(p14:Person {person_id:'P14', full_name:'Tran Ngoc Anh', gender:'Nu', birth_year:2005, phone:'0901000014', address:'Can Tho'}),
-(p15:Person {person_id:'P15', full_name:'Vo Thanh Dat', gender:'Nam', birth_year:2002, phone:'0901000015', address:'Ho Chi Minh City'}),
-(p16:Person {person_id:'P16', full_name:'Nguyen Bao Chau', gender:'Nu', birth_year:2003, phone:'0901000016', address:'Ho Chi Minh City'}),
-(p17:Person {person_id:'P17', full_name:'Nguyen Duc An', gender:'Nam', birth_year:2025, phone:'', address:'Ho Chi Minh City'}),
-(p18:Person {person_id:'P18', full_name:'Nguyen Gia Han', gender:'Nu', birth_year:2026, phone:'', address:'Ho Chi Minh City'}),
-(p19:Person {person_id:'P19', full_name:'Nguyen Thanh Tung', gender:'Nam', birth_year:1955, phone:'0901000019', address:'Vinh Long'}),
-(p20:Person {person_id:'P20', full_name:'Do Thi Nga', gender:'Nu', birth_year:1958, phone:'0901000020', address:'Vinh Long'});
+// Nếu muốn xóa dữ liệu Person cũ trước khi seed lại, chạy thủ công:
+// MATCH (p:Person) DETACH DELETE p;
 
-// Kiểm tra đủ 20 node
+UNWIND [
+    {person_id:'P001', full_name:'Nguyễn Văn Phúc',       gender:'Nam', birth_year:1948, generation:1},
+    {person_id:'P002', full_name:'Trần Thị Mai',          gender:'Nữ',  birth_year:1950, generation:1},
+
+    {person_id:'P003', full_name:'Hồ Đức Bình',           gender:'Nam', birth_year:1950, generation:1},
+    {person_id:'P004', full_name:'Lê Ngọc Minh Nguyên',   gender:'Nữ',  birth_year:1952, generation:1},
+
+    {person_id:'P005', full_name:'Lương Kiến Toàn',       gender:'Nam', birth_year:1951, generation:1},
+    {person_id:'P006', full_name:'Trần Thị Mỹ Hạnh',      gender:'Nữ',  birth_year:1953, generation:1},
+
+    {person_id:'P007', full_name:'Chu Văn Hải',           gender:'Nam', birth_year:1952, generation:1},
+    {person_id:'P008', full_name:'Phan Mỹ Hạnh',          gender:'Nữ',  birth_year:1954, generation:1},
+
+    {person_id:'P009', full_name:'Nguyễn Tiến Tài',       gender:'Nam', birth_year:1974, generation:2},
+    {person_id:'P010', full_name:'Hồ Thị Thanh Nhã',      gender:'Nữ',  birth_year:1976, generation:2},
+    {person_id:'P011', full_name:'Nguyễn Thị Thùy Linh',  gender:'Nữ',  birth_year:1977, generation:2},
+    {person_id:'P012', full_name:'Bùi Quang Long',         gender:'Nam', birth_year:1975, generation:2},
+
+    {person_id:'P013', full_name:'Lương Tấn Hùng',         gender:'Nam', birth_year:1978, generation:2},
+    {person_id:'P014', full_name:'Đỗ Võ Kim Nhi',          gender:'Nữ',  birth_year:1980, generation:2},
+
+    {person_id:'P015', full_name:'Chu Thế Long',           gender:'Nam', birth_year:1979, generation:2},
+    {person_id:'P016', full_name:'Chung Nhã Quỳnh',        gender:'Nữ',  birth_year:1981, generation:2},
+
+    {person_id:'P017', full_name:'Nguyễn Kim Long',        gender:'Nam', birth_year:2000, generation:3},
+    {person_id:'P018', full_name:'Nguyễn Hữu Mẫn Nghi',   gender:'Nữ',  birth_year:2002, generation:3},
+    {person_id:'P019', full_name:'Nguyễn Hoàng Long',      gender:'Nam', birth_year:2004, generation:3},
+
+    {person_id:'P020', full_name:'Bùi Gia Linh',           gender:'Nữ',  birth_year:1999, generation:3},
+    {person_id:'P021', full_name:'Bùi Minh Kha',           gender:'Nam', birth_year:2002, generation:3},
+    {person_id:'P022', full_name:'Bùi Khánh An',           gender:'Nữ',  birth_year:2005, generation:3},
+
+    {person_id:'P023', full_name:'Lương Bảo Ngọc',         gender:'Nữ',  birth_year:2001, generation:3},
+    {person_id:'P024', full_name:'Lương Minh Khôi',        gender:'Nam', birth_year:2005, generation:3},
+
+    {person_id:'P025', full_name:'Chu Gia Hân',            gender:'Nữ',  birth_year:2000, generation:3},
+    {person_id:'P026', full_name:'Chu Gia Minh',           gender:'Nam', birth_year:2003, generation:3},
+
+    {person_id:'P027', full_name:'Phạm Gia Khang',         gender:'Nam', birth_year:2001, generation:3},
+    {person_id:'P028', full_name:'Đào Minh Thuận',         gender:'Nam', birth_year:1999, generation:3},
+    {person_id:'P029', full_name:'Vũ Anh Khoa',            gender:'Nam', birth_year:2002, generation:3},
+    {person_id:'P030', full_name:'Trần Minh Hiếu',         gender:'Nam', birth_year:2003, generation:3},
+
+    {person_id:'P031', full_name:'Nguyễn Gia Bảo',         gender:'Nam', birth_year:2025, generation:4},
+    {person_id:'P032', full_name:'Phạm Ngọc Hân',          gender:'Nữ',  birth_year:2026, generation:4},
+    {person_id:'P033', full_name:'Nguyễn Minh Quân',       gender:'Nam', birth_year:2026, generation:4},
+    {person_id:'P034', full_name:'Đào Khánh Linh',         gender:'Nữ',  birth_year:2025, generation:4},
+    {person_id:'P035', full_name:'Vũ Gia An',              gender:'Nam', birth_year:2026, generation:4},
+    {person_id:'P036', full_name:'Trần Gia Hưng',          gender:'Nam', birth_year:2026, generation:4}
+] AS person
+
+MERGE (p:Person {person_id: person.person_id})
+SET p.full_name  = person.full_name,
+    p.gender     = person.gender,
+    p.birth_year = person.birth_year,
+    p.generation = person.generation;
+
+// Kiểm tra kết quả seed
 MATCH (p:Person)
-RETURN count(p) AS total_people;
+RETURN p.person_id AS id,
+       p.full_name AS full_name,
+       p.gender AS gender,
+       p.birth_year AS birth_year,
+       p.generation AS generation
+ORDER BY p.person_id;
