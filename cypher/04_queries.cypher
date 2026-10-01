@@ -8,9 +8,8 @@ MATCH (p:Person)
 RETURN p.person_id AS id,
        p.full_name AS full_name,
        p.gender AS gender,
-       p.birth_year AS birth_year,
-       p.generation AS generation
-ORDER BY p.generation, p.birth_year;
+       p.birth_year AS birth_year
+ORDER BY p.birth_year, p.full_name;
 
 // 2. Hiển thị toàn bộ graph
 MATCH (a:Person)-[r]->(b:Person)
@@ -34,15 +33,18 @@ RETURN child.full_name AS child
 ORDER BY child.birth_year;
 
 // 7. Tìm anh/chị/em ruột của Nguyễn Kim Long
-// Không cần lưu SIBLING_OF vì có thể suy ra từ cha/mẹ chung.
+// Không lưu SIBLING_OF; quan hệ anh/chị/em được suy ra từ cha/mẹ chung.
 MATCH (parent:Person)-[:FATHER_OF|MOTHER_OF]->(p:Person {full_name:'Nguyễn Kim Long'})
 MATCH (parent)-[:FATHER_OF|MOTHER_OF]->(sibling:Person)
 WHERE sibling <> p
 RETURN DISTINCT sibling.full_name AS sibling;
 
-// 8. Tìm vợ/chồng của Nguyễn Kim Long
-MATCH (:Person {full_name:'Nguyễn Kim Long'})-[:SPOUSE_OF]-(spouse:Person)
-RETURN spouse.full_name AS spouse;
+// 8. Tìm vợ/chồng của Nguyễn Kim Long và thông tin hôn nhân
+MATCH (p:Person {full_name:'Nguyễn Kim Long'})-[r:SPOUSE_OF]-(spouse:Person)
+RETURN spouse.full_name AS spouse,
+       r.since AS married_since,
+       r.status AS marriage_status,
+       r.registered AS registered;
 
 // 9. Tìm ông bà của Nguyễn Kim Long
 MATCH (grandparent:Person)-[:FATHER_OF|MOTHER_OF]->(parent:Person)
@@ -65,11 +67,12 @@ MATCH (a:Person {full_name:'Đào Minh Thuận'}),
 MATCH path = shortestPath((a)-[*..15]-(b))
 RETURN path;
 
-// 13. Tìm các thành viên thuộc thế hệ 3
-MATCH (p:Person {generation:3})
+// 13. Tìm các thành viên sinh trong giai đoạn 1999-2005
+MATCH (p:Person)
+WHERE p.birth_year >= 1999 AND p.birth_year <= 2005
 RETURN p.full_name AS full_name,
        p.birth_year AS birth_year
-ORDER BY p.birth_year;
+ORDER BY p.birth_year, p.full_name;
 
 // 14. Đếm số relationship theo loại
 MATCH ()-[r]->()
@@ -83,11 +86,31 @@ RETURN p.full_name AS full_name,
        count(r) AS degree
 ORDER BY degree DESC;
 
+// 16. Xem thông tin chi tiết các quan hệ cha/mẹ -> con
+MATCH (parent:Person)-[r:FATHER_OF|MOTHER_OF]->(child:Person)
+RETURN parent.full_name AS parent,
+       type(r) AS relationship,
+       child.full_name AS child,
+       r.parent_type AS parent_type,
+       r.since AS since,
+       r.verified AS verified
+ORDER BY r.since;
+
+// 17. Liệt kê toàn bộ các cặp vợ chồng và năm kết hôn
+MATCH (a:Person)-[r:SPOUSE_OF]-(b:Person)
+WHERE a.person_id < b.person_id
+RETURN a.full_name AS person_a,
+       b.full_name AS person_b,
+       r.since AS married_since,
+       r.status AS status,
+       r.registered AS registered
+ORDER BY r.since;
+
 // ============================================================
 // TRUY VẤN KIỂM TRA QUAN HỆ HUYẾT THỐNG / CẬN HUYẾT
 // ============================================================
 
-// 16. Kiểm tra hai người có tổ tiên chung trong tối đa 4 thế hệ hay không.
+// 18. Kiểm tra hai người có tổ tiên chung trong tối đa 4 đời hay không.
 // Thay tên a và b để kiểm tra cặp bất kỳ.
 MATCH (a:Person {full_name:'Nguyễn Kim Long'}),
       (b:Person {full_name:'Bùi Gia Linh'})
@@ -95,10 +118,10 @@ MATCH (ancestor:Person)-[:FATHER_OF|MOTHER_OF*1..4]->(a)
 MATCH (ancestor)-[:FATHER_OF|MOTHER_OF*1..4]->(b)
 RETURN DISTINCT ancestor.full_name AS common_ancestor;
 
-// Với dữ liệu hiện tại, Nguyễn Kim Long và Bùi Gia Linh là anh/chị/em họ:
-// tổ tiên chung là Nguyễn Văn Phúc và Trần Thị Mai.
+// Với dữ liệu hiện tại, Nguyễn Kim Long và Bùi Gia Linh có tổ tiên chung
+// là Nguyễn Văn Phúc và Trần Thị Mai.
 
-// 17. Kiểm tra một cặp vợ/chồng cụ thể có tổ tiên chung trong tối đa 4 thế hệ.
+// 19. Kiểm tra một cặp vợ chồng có tổ tiên chung trong tối đa 4 đời.
 MATCH (a:Person {full_name:'Nguyễn Kim Long'})-[:SPOUSE_OF]-(b:Person {full_name:'Chu Gia Hân'})
 OPTIONAL MATCH (ancestor:Person)-[:FATHER_OF|MOTHER_OF*1..4]->(a)
 WHERE EXISTS {
@@ -109,4 +132,4 @@ RETURN a.full_name AS person_a,
        collect(DISTINCT ancestor.full_name) AS common_ancestors;
 
 // common_ancestors = [] nghĩa là không phát hiện tổ tiên chung
-// trong phạm vi dữ liệu và số thế hệ đang kiểm tra.
+// trong phạm vi dữ liệu và số đời đang kiểm tra.
