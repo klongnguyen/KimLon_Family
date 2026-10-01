@@ -1,130 +1,198 @@
 // ============================================================
 // 03_relationships.cypher
-// Tạo các relationship cho dữ liệu mẫu
+// Quan hệ cho mạng lưới thân nhân liên thông
+// Chỉ lưu quan hệ gốc: SPOUSE_OF, FATHER_OF, MOTHER_OF
+// Quan hệ anh/chị/em, ông/bà, cô/dì/chú/bác... được suy ra bằng truy vấn
 // ============================================================
 
-// --------------------
-// Vợ chồng
-// --------------------
-MATCH (a:Person {person_id:'P01'}), (b:Person {person_id:'P02'})
+// ------------------------------------------------------------
+// 1. HÔN NHÂN - THẾ HỆ 1
+// ------------------------------------------------------------
+MATCH (a:Person {person_id:'P001'}), (b:Person {person_id:'P002'})
 MERGE (a)-[:SPOUSE_OF {since:1970}]->(b);
 
-MATCH (a:Person {person_id:'P03'}), (b:Person {person_id:'P04'})
+MATCH (a:Person {person_id:'P003'}), (b:Person {person_id:'P004'})
+MERGE (a)-[:SPOUSE_OF {since:1972}]->(b);
+
+MATCH (a:Person {person_id:'P005'}), (b:Person {person_id:'P006'})
+MERGE (a)-[:SPOUSE_OF {since:1973}]->(b);
+
+MATCH (a:Person {person_id:'P007'}), (b:Person {person_id:'P008'})
+MERGE (a)-[:SPOUSE_OF {since:1974}]->(b);
+
+// ------------------------------------------------------------
+// 2. CHA/MẸ -> CON - THẾ HỆ 1 -> THẾ HỆ 2
+// ------------------------------------------------------------
+// Nguyễn Văn Phúc + Trần Thị Mai -> Nguyễn Tiến Tài, Nguyễn Thị Thùy Linh
+MATCH (f:Person {person_id:'P001'}), (c:Person {person_id:'P009'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P002'}), (c:Person {person_id:'P009'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P001'}), (c:Person {person_id:'P011'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P002'}), (c:Person {person_id:'P011'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// Hồ Đức Bình + Lê Ngọc Minh Nguyên -> Hồ Thị Thanh Nhã
+MATCH (f:Person {person_id:'P003'}), (c:Person {person_id:'P010'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P004'}), (c:Person {person_id:'P010'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// Lương Kiến Toàn + Trần Thị Mỹ Hạnh -> Lương Tấn Hùng
+MATCH (f:Person {person_id:'P005'}), (c:Person {person_id:'P013'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P006'}), (c:Person {person_id:'P013'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// Chu Văn Hải + Phan Mỹ Hạnh -> Chu Thế Long
+MATCH (f:Person {person_id:'P007'}), (c:Person {person_id:'P015'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P008'}), (c:Person {person_id:'P015'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// ------------------------------------------------------------
+// 3. HÔN NHÂN - THẾ HỆ 2
+// ------------------------------------------------------------
+MATCH (a:Person {person_id:'P009'}), (b:Person {person_id:'P010'})
 MERGE (a)-[:SPOUSE_OF {since:1998}]->(b);
 
-MATCH (a:Person {person_id:'P05'}), (b:Person {person_id:'P06'})
-MERGE (a)-[:SPOUSE_OF {since:1999}]->(b);
+MATCH (a:Person {person_id:'P011'}), (b:Person {person_id:'P012'})
+MERGE (a)-[:SPOUSE_OF {since:1998}]->(b);
 
-MATCH (a:Person {person_id:'P07'}), (b:Person {person_id:'P08'})
+// Hai quan hệ đã được xác nhận ban đầu
+MATCH (a:Person {person_id:'P013'}), (b:Person {person_id:'P014'})
 MERGE (a)-[:SPOUSE_OF {since:2000}]->(b);
 
-MATCH (a:Person {person_id:'P19'}), (b:Person {person_id:'P20'})
-MERGE (a)-[:SPOUSE_OF {since:1977}]->(b);
+MATCH (a:Person {person_id:'P015'}), (b:Person {person_id:'P016'})
+MERGE (a)-[:SPOUSE_OF {since:2000}]->(b);
 
-MATCH (a:Person {person_id:'P09'}), (b:Person {person_id:'P16'})
+// ------------------------------------------------------------
+// 4. CHA/MẸ -> CON - THẾ HỆ 2 -> THẾ HỆ 3
+// ------------------------------------------------------------
+// Nguyễn Tiến Tài + Hồ Thị Thanh Nhã
+MATCH (f:Person {person_id:'P009'}), (c:Person {person_id:'P017'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P010'}), (c:Person {person_id:'P017'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+MATCH (f:Person {person_id:'P009'}), (c:Person {person_id:'P018'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P010'}), (c:Person {person_id:'P018'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+MATCH (f:Person {person_id:'P009'}), (c:Person {person_id:'P019'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P010'}), (c:Person {person_id:'P019'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// Nguyễn Thị Thùy Linh + Bùi Quang Long
+MATCH (m:Person {person_id:'P011'}), (c:Person {person_id:'P020'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P012'}), (c:Person {person_id:'P020'})
+MERGE (f)-[:FATHER_OF]->(c);
+
+MATCH (m:Person {person_id:'P011'}), (c:Person {person_id:'P021'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P012'}), (c:Person {person_id:'P021'})
+MERGE (f)-[:FATHER_OF]->(c);
+
+MATCH (m:Person {person_id:'P011'}), (c:Person {person_id:'P022'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P012'}), (c:Person {person_id:'P022'})
+MERGE (f)-[:FATHER_OF]->(c);
+
+// Lương Tấn Hùng + Đỗ Võ Kim Nhi
+MATCH (f:Person {person_id:'P013'}), (c:Person {person_id:'P023'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P014'}), (c:Person {person_id:'P023'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+MATCH (f:Person {person_id:'P013'}), (c:Person {person_id:'P024'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P014'}), (c:Person {person_id:'P024'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// Chu Thế Long + Chung Nhã Quỳnh
+MATCH (f:Person {person_id:'P015'}), (c:Person {person_id:'P025'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P016'}), (c:Person {person_id:'P025'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+MATCH (f:Person {person_id:'P015'}), (c:Person {person_id:'P026'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P016'}), (c:Person {person_id:'P026'})
+MERGE (m)-[:MOTHER_OF]->(c);
+
+// ------------------------------------------------------------
+// 5. HÔN NHÂN - THẾ HỆ 3
+// Các cuộc hôn nhân này nối các nhánh thành một mạng liên thông
+// ------------------------------------------------------------
+// Nguyễn <-> Chu
+MATCH (a:Person {person_id:'P017'}), (b:Person {person_id:'P025'})
 MERGE (a)-[:SPOUSE_OF {since:2024}]->(b);
 
-MATCH (a:Person {person_id:'P14'}), (b:Person {person_id:'P15'})
+// Nguyễn <-> Phạm (quan hệ đã xác nhận ban đầu)
+MATCH (a:Person {person_id:'P018'}), (b:Person {person_id:'P027'})
 MERGE (a)-[:SPOUSE_OF {since:2025}]->(b);
 
-// --------------------
-// Thế hệ 1 -> thế hệ 2
-// P01 + P02 là cha mẹ của P03, P05, P07
-// --------------------
-MATCH (father:Person {person_id:'P01'}), (child:Person {person_id:'P03'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P02'}), (child:Person {person_id:'P03'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Nguyễn <-> Lương
+MATCH (a:Person {person_id:'P019'}), (b:Person {person_id:'P023'})
+MERGE (a)-[:SPOUSE_OF {since:2025}]->(b);
 
-MATCH (father:Person {person_id:'P01'}), (child:Person {person_id:'P05'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P02'}), (child:Person {person_id:'P05'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Bùi <-> Đào
+MATCH (a:Person {person_id:'P020'}), (b:Person {person_id:'P028'})
+MERGE (a)-[:SPOUSE_OF {since:2023}]->(b);
 
-MATCH (father:Person {person_id:'P01'}), (child:Person {person_id:'P07'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P02'}), (child:Person {person_id:'P07'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Bùi <-> Vũ
+MATCH (a:Person {person_id:'P022'}), (b:Person {person_id:'P029'})
+MERGE (a)-[:SPOUSE_OF {since:2025}]->(b);
 
-// P19 + P20 là cha mẹ của P04
-MATCH (father:Person {person_id:'P19'}), (child:Person {person_id:'P04'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P20'}), (child:Person {person_id:'P04'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Chu <-> Trần
+MATCH (a:Person {person_id:'P026'}), (b:Person {person_id:'P030'})
+MERGE (a)-[:SPOUSE_OF {since:2025}]->(b);
 
-// --------------------
-// Thế hệ 2 -> thế hệ 3
-// --------------------
-// P03 + P04 -> P09, P10
-MATCH (father:Person {person_id:'P03'}), (child:Person {person_id:'P09'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P04'}), (child:Person {person_id:'P09'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// ------------------------------------------------------------
+// 6. CHA/MẸ -> CON - THẾ HỆ 3 -> THẾ HỆ 4
+// ------------------------------------------------------------
+// Nguyễn Kim Long + Chu Gia Hân -> Nguyễn Gia Bảo
+MATCH (f:Person {person_id:'P017'}), (c:Person {person_id:'P031'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P025'}), (c:Person {person_id:'P031'})
+MERGE (m)-[:MOTHER_OF]->(c);
 
-MATCH (father:Person {person_id:'P03'}), (child:Person {person_id:'P10'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P04'}), (child:Person {person_id:'P10'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Nguyễn Hữu Mẫn Nghi + Phạm Gia Khang -> Phạm Ngọc Hân
+MATCH (m:Person {person_id:'P018'}), (c:Person {person_id:'P032'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P027'}), (c:Person {person_id:'P032'})
+MERGE (f)-[:FATHER_OF]->(c);
 
-// P05 + P06 -> P11, P12
-MATCH (father:Person {person_id:'P05'}), (child:Person {person_id:'P11'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P06'}), (child:Person {person_id:'P11'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Nguyễn Hoàng Long + Lương Bảo Ngọc -> Nguyễn Minh Quân
+MATCH (f:Person {person_id:'P019'}), (c:Person {person_id:'P033'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P023'}), (c:Person {person_id:'P033'})
+MERGE (m)-[:MOTHER_OF]->(c);
 
-MATCH (father:Person {person_id:'P05'}), (child:Person {person_id:'P12'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P06'}), (child:Person {person_id:'P12'})
-MERGE (mother)-[:MOTHER_OF]->(child);
+// Bùi Gia Linh + Đào Minh Thuận -> Đào Khánh Linh
+MATCH (m:Person {person_id:'P020'}), (c:Person {person_id:'P034'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P028'}), (c:Person {person_id:'P034'})
+MERGE (f)-[:FATHER_OF]->(c);
 
-// P07 + P08 -> P13, P14
-MATCH (mother:Person {person_id:'P07'}), (child:Person {person_id:'P13'})
-MERGE (mother)-[:MOTHER_OF]->(child);
-MATCH (father:Person {person_id:'P08'}), (child:Person {person_id:'P13'})
-MERGE (father)-[:FATHER_OF]->(child);
+// Bùi Khánh An + Vũ Anh Khoa -> Vũ Gia An
+MATCH (m:Person {person_id:'P022'}), (c:Person {person_id:'P035'})
+MERGE (m)-[:MOTHER_OF]->(c);
+MATCH (f:Person {person_id:'P029'}), (c:Person {person_id:'P035'})
+MERGE (f)-[:FATHER_OF]->(c);
 
-MATCH (mother:Person {person_id:'P07'}), (child:Person {person_id:'P14'})
-MERGE (mother)-[:MOTHER_OF]->(child);
-MATCH (father:Person {person_id:'P08'}), (child:Person {person_id:'P14'})
-MERGE (father)-[:FATHER_OF]->(child);
+// Chu Gia Minh + Trần Minh Hiếu -> Trần Gia Hưng
+MATCH (f:Person {person_id:'P026'}), (c:Person {person_id:'P036'})
+MERGE (f)-[:FATHER_OF]->(c);
+MATCH (m:Person {person_id:'P030'}), (c:Person {person_id:'P036'})
+MERGE (m)-[:MOTHER_OF]->(c);
 
-// --------------------
-// Thế hệ 3 -> thế hệ 4
-// P09 + P16 -> P17, P18
-// --------------------
-MATCH (father:Person {person_id:'P09'}), (child:Person {person_id:'P17'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P16'}), (child:Person {person_id:'P17'})
-MERGE (mother)-[:MOTHER_OF]->(child);
-
-MATCH (father:Person {person_id:'P09'}), (child:Person {person_id:'P18'})
-MERGE (father)-[:FATHER_OF]->(child);
-MATCH (mother:Person {person_id:'P16'}), (child:Person {person_id:'P18'})
-MERGE (mother)-[:MOTHER_OF]->(child);
-
-// --------------------
-// Anh/chị/em ruột
-// Relationship chỉ cần lưu một chiều; khi truy vấn dùng -[:SIBLING_OF]-
-// --------------------
-MATCH (a:Person {person_id:'P03'}), (b:Person {person_id:'P05'})
-MERGE (a)-[:SIBLING_OF]->(b);
-MATCH (a:Person {person_id:'P03'}), (b:Person {person_id:'P07'})
-MERGE (a)-[:SIBLING_OF]->(b);
-MATCH (a:Person {person_id:'P05'}), (b:Person {person_id:'P07'})
-MERGE (a)-[:SIBLING_OF]->(b);
-
-MATCH (a:Person {person_id:'P09'}), (b:Person {person_id:'P10'})
-MERGE (a)-[:SIBLING_OF]->(b);
-
-MATCH (a:Person {person_id:'P11'}), (b:Person {person_id:'P12'})
-MERGE (a)-[:SIBLING_OF]->(b);
-
-MATCH (a:Person {person_id:'P13'}), (b:Person {person_id:'P14'})
-MERGE (a)-[:SIBLING_OF]->(b);
-
-MATCH (a:Person {person_id:'P17'}), (b:Person {person_id:'P18'})
-MERGE (a)-[:SIBLING_OF]->(b);
-
-// Kiểm tra toàn bộ graph
+// ------------------------------------------------------------
+// 7. KIỂM TRA GRAPH
+// ------------------------------------------------------------
 MATCH (a:Person)-[r]->(b:Person)
 RETURN a, r, b;
