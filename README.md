@@ -2,17 +2,27 @@
 
 Bài tập **Quản lý thân nhân bằng Neo4j Graph Database**.
 
-## 1. Mục tiêu
+Dự án mô hình hóa một **mạng lưới thân nhân liên thông** gồm nhiều gia đình/họ khác nhau. Các nhánh được kết nối với nhau thông qua quan hệ huyết thống và hôn nhân, phù hợp để minh họa khả năng truy vấn graph nhiều tầng của Neo4j.
 
-Dự án mô hình hóa các thành viên trong gia đình dưới dạng **Node** và các mối quan hệ thân nhân dưới dạng **Relationship**. Neo4j được sử dụng để biểu diễn và truy vấn các quan hệ nhiều tầng như cha mẹ, con cái, anh chị em, vợ chồng, ông bà và hậu duệ.
+## Cây quan hệ cuối cùng
 
-## 2. Công nghệ
+![Cây quan hệ thân nhân cuối cùng](docs/2001230451_NguyenKimLong.svg)
+
+- **37** node `Person`
+- **58** relationship
+  - **14** `SPOUSE_OF`
+  - **22** `FATHER_OF`
+  - **22** `MOTHER_OF`
+
+Các nhánh Nguyễn, Hồ, Lương, Chu, Bùi, Phạm, Đào, Trần và Vũ được nối thành cùng một mạng thân nhân.
+
+## Công nghệ
 
 - Neo4j
 - Cypher Query Language
 - Neo4j Browser / Neo4j Bloom
 
-## 3. Mô hình dữ liệu
+## Mô hình dữ liệu
 
 ### Node
 
@@ -20,14 +30,14 @@ Dự án mô hình hóa các thành viên trong gia đình dưới dạng **Node
 (:Person)
 ```
 
-Thuộc tính chính:
+Thuộc tính hiện dùng:
 
-- `person_id`: mã định danh
+- `person_id`: mã định danh duy nhất
 - `full_name`: họ tên
 - `gender`: giới tính
 - `birth_year`: năm sinh
-- `phone`: số điện thoại
-- `address`: địa chỉ
+
+Không lưu cứng thuộc tính `generation`. Thế hệ, ông/bà, cháu, anh/chị/em... được suy ra từ đường quan hệ cha/mẹ → con.
 
 ### Relationship
 
@@ -35,10 +45,31 @@ Thuộc tính chính:
 (:Person)-[:FATHER_OF]->(:Person)
 (:Person)-[:MOTHER_OF]->(:Person)
 (:Person)-[:SPOUSE_OF]->(:Person)
-(:Person)-[:SIBLING_OF]->(:Person)
 ```
 
-## 4. Cấu trúc repository
+#### Thuộc tính hôn nhân
+
+```text
+SPOUSE_OF {
+  since,
+  status,
+  registered
+}
+```
+
+#### Thuộc tính cha/mẹ - con
+
+```text
+FATHER_OF / MOTHER_OF {
+  since,
+  parent_type,
+  verified
+}
+```
+
+Quan hệ `SIBLING_OF` không được lưu riêng vì có thể suy ra từ cha/mẹ chung, giúp tránh dữ liệu dư thừa hoặc mâu thuẫn.
+
+## Cấu trúc repository
 
 ```text
 KimLon_Family/
@@ -49,28 +80,38 @@ KimLon_Family/
 │   ├── 03_relationships.cypher
 │   └── 04_queries.cypher
 └── docs/
+    ├── 2001230451_NguyenKimLong.svg
     └── MO_HINH_DU_LIEU.md
 ```
 
-## 5. Thứ tự chạy
+## Thứ tự chạy
 
-Chạy lần lượt các file trong thư mục `cypher`:
+Nếu database đang chứa seed cũ và muốn tạo lại từ đầu:
+
+```cypher
+MATCH (p:Person)
+DETACH DELETE p;
+```
+
+Sau đó chạy lần lượt:
 
 1. `01_constraints.cypher` – tạo constraint/index.
-2. `02_seed_people.cypher` – tạo 20 node `Person` mẫu.
-3. `03_relationships.cypher` – tạo các quan hệ gia đình.
-4. `04_queries.cypher` – các truy vấn dùng để kiểm tra và demo.
+2. `02_seed_people.cypher` – seed 37 thành viên.
+3. `03_relationships.cypher` – tạo 58 quan hệ thân nhân.
+4. `04_queries.cypher` – bộ truy vấn quản lý, phân tích quan hệ và kiểm tra huyết thống.
 
-## 6. Một số bài toán có thể truy vấn
+## Các nghiệp vụ chính
 
-- Tìm cha/mẹ của một người.
-- Tìm con của một người.
-- Tìm anh/chị/em.
-- Tìm ông bà.
-- Tìm toàn bộ hậu duệ.
-- Tìm đường quan hệ ngắn nhất giữa hai thành viên.
-- Hiển thị toàn bộ cây quan hệ trong Neo4j Bloom.
+- Tra cứu thành viên.
+- Tìm cha, mẹ và con.
+- Suy ra anh/chị/em ruột.
+- Tìm vợ/chồng và thông tin hôn nhân.
+- Tìm ông bà, cháu, tổ tiên và hậu duệ.
+- Tìm đường quan hệ ngắn nhất giữa hai người.
+- Kiểm tra node cô lập hoặc dữ liệu quan hệ chưa đầy đủ.
+- Kiểm tra hai người có tổ tiên chung.
+- Quét toàn bộ các cặp đã kết hôn để phát hiện quan hệ huyết thống trong phạm vi 3 đời.
 
-## 7. Ghi chú
+## Ghi chú
 
-Dữ liệu trong repository là **dữ liệu mẫu phục vụ bài tập**. Có thể thay thế các node trong `02_seed_people.cypher` bằng thông tin gia đình thực tế mà không cần thay đổi mô hình tổng thể.
+Dữ liệu được xây dựng cho mục đích học tập và minh họa Neo4j. Query kiểm tra cận huyết trong `04_queries.cypher` dựa trên cấu trúc tổ tiên trong graph và phạm vi tối đa 3 cạnh cha/mẹ; đây là kiểm tra kỹ thuật trên dữ liệu mô phỏng, không thay thế xác minh hộ tịch hoặc kết luận pháp lý.
